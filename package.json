@@ -1,0 +1,19 @@
+{
+  "name": "cou-brd-loaddatapnp",
+  "version": "1.0.0",
+  "description": "PowerShell scripts for loading Boards and Commissions data",
+  "main": "Add-CoaBoardsData.ps1",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcrocke9/cou-brd-loadDataPnP.git"
+  },
+  "author": "Joe Crockett",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jcrocke9/cou-brd-loadDataPnP/issues"
+  },
+  "homepage": "https://github.com/jcrocke9/cou-brd-loadDataPnP#readme"
+}
