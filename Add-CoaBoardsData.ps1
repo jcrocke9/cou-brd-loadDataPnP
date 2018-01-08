@@ -139,11 +139,55 @@ function Add-CoaPnpListItemAppointee {
             else {
                 $boardsArchive = $false
             }
-            Add-PnPListItem -List Appointee -Values @{
-                "Title" = $_.LastName;
-                "boardsCommi"   = $commiLookupId;
-                "boardsArchive" = $boardsArchive;
+            if ($_.Oath -eq "TRUE") {
+                $boardsOath = $true
             }
+            else {
+                $boardsOath = $false
+            }
+            if ($_.Chairman -eq "TRUE") {
+                $boardsChairman = $true
+            }
+            else {
+                $boardsChairman = $false
+            }
+            $boardsItem = Add-PnPListItem -List Appointee -Values @{
+                "Title" = $_.LastName;
+                "FirstName" = $_.FirstName;
+                "boardsArchive" = $boardsArchive;
+                "boardsMemberType" = $_.MemberType;
+                "WorkAddress" = $_.StreetName;
+                "WorkCity" = $_.City;
+                "WorkState" = $_.State;
+                "WorkZip" = $_.Zip;
+                "Email" = $_.Email;
+                "HomePhone" = $_.HomePh;
+                "WorkPhone" = $_.Businessph;
+                "WorkFax" = $_.Fax;
+                "Company" = $_.Occupation;
+                "boardsStartDate" = $_.StartDate;
+                "boardsOriginalDate" = $_.OriginalDate;
+                "boardsDateTaken" = $_.DateTaken;
+            } 
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsCommi"   = $commiLookupId;
+            }
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsOath"   = $boardsOath;
+            }
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsChairman"   = $boardsChairman;
+            }
+            if ($_.EndDate) {
+                Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                    "boardsEndDate" = $_.EndDate;
+                }
+            }
+            clv commiLookup;
+            clv commiLookupId;
+            clv boardsOath;
+            clv boardsArchive;
+            clv boardsChairman;
         }
         else {
             Add-PnPListItem -List Appointee -Values @{
