@@ -1,3 +1,5 @@
+Import-Module SharePointPnPPowerShellOnline  -NoClobber
+
 function Connect-CoaPnpSite {
     Param
     (
@@ -28,7 +30,7 @@ function Import-CoaCsv {
         [parameter(Mandatory = $true)]
         [String]$FilePath
     )
-    Import-Csv -Path $FilePath | foreach {
+    Import-Csv -Path $FilePath | ForEach-Object {
         $commission = [Commission]::new()
         $commission.Commission = $_.COMMISSION
         $commission.Totmembers = $_.Totmembers
@@ -43,7 +45,7 @@ function Import-CoaCsv {
 }
 
 function Add-CoaPnpListItem {
-    $commissionsArr | foreach {
+    $commissionsArr | ForEach-Object {
         Add-PnPListItem -List "Commissions" -Values @{
             "Title"             = $_.Commission;
             "commiTotalMembers" = $_.Totmembers;
@@ -97,7 +99,7 @@ function Import-CoaCsvAppointee {
         [parameter(Mandatory = $true)]
         [String]$FilePath
     )
-    Import-Csv -Path $FilePath | foreach {
+    Import-Csv -Path $FilePath | ForEach-Object {
         $appointee = [Appointee]::new()
         $appointee.LastName = $_.LastName
         $appointee.FirstName = $_.FirstName
@@ -129,72 +131,111 @@ function Import-CoaCsvAppointee {
 }
 
 function Add-CoaPnpListItemAppointee {
-    $appointeesArr | foreach {
+    $appointeesArr | ForEach-Object {
+        $boardsItem = Add-PnPListItem -List Appointee -Values @{
+            "Title"            = $_.LastName;
+            "FirstName"        = $_.FirstName;
+            "boardsMemberType" = $_.MemberType;
+            "WorkAddress"      = $_.StreetName;
+            "WorkCity"         = $_.City;
+            "WorkState"        = $_.State;
+            "WorkZip"          = $_.Zip;
+            "Email"            = $_.Email;
+            "HomePhone"        = $_.HomePh;
+            "WorkPhone"        = $_.Businessph;
+            "WorkFax"          = $_.Fax;
+            "Company"          = $_.Occupation;
+            "boardsDeletedBy"  = $_.DeletedBy;
+            "boardsDesc"       = $_.Comments;
+
+        }
+        if ($_.Oath -eq "TRUE") {
+            $boardsOath = $true
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsOath" = $boardsOath;
+            } 
+        }
+        else {
+            $boardsOath = $false
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsOath" = $boardsOath;
+            } 
+        }
+        Clear-Variable boardsOath
+        if ($_.Archive -eq "TRUE") {
+            $boardsArchive = $true
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsArchive" = $boardsArchive;
+            }
+        }
+        else {
+            $boardsChairman = $false
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsArchive" = $boardsArchive;
+            }
+        }
+        Clear-Variable boardsArchive;
+        if ($_.Chairman -eq "TRUE") {
+            $boardsChairman = $true
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsChairman" = $boardsChairman;
+            }
+        }
+        else {
+            $boardsChairman = $false
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsChairman" = $boardsChairman;
+            }
+        }
+        Clear-Variable boardsChairman; 
+        if ($_.Delete -eq "TRUE") {
+            $boardsDelete = $true;
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsDelete" = $boardsDelete;
+            }
+        }
+        else {
+            $boardsDelete = $false;
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsDelete" = $boardsDelete;
+            }
+        }
+        Clear-Variable boardsDelete;
+
+        if ($_.StartDate) {
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsStartDate" = $_.StartDate;
+            }
+        }
+        if ($_.EndDate) {
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsEndDate" = $_.EndDate;
+            }
+        }
+        if ($_.OriginalDate) {
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsOriginalDate" = $_.OriginalDate;
+            }
+        }
+        if ($_.DateTaken) {
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsDateTaken" = $_.DateTaken;
+            }
+        }
+        if ($_.DeletedWhen) {
+            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+                "boardsDeletedDate" = $_.DeletedWhen;
+            }
+        }
         if ($_.Commission) {
             $commiLookup = Get-CoaCommiItem -ListItemTitle $_.Commission
             $commiLookupId = $commiLookup.Id;
-            if ($_.Archive -eq "TRUE") {
-                $boardsArchive = $true
-            }
-            else {
-                $boardsArchive = $false
-            }
-            if ($_.Oath -eq "TRUE") {
-                $boardsOath = $true
-            }
-            else {
-                $boardsOath = $false
-            }
-            if ($_.Chairman -eq "TRUE") {
-                $boardsChairman = $true
-            }
-            else {
-                $boardsChairman = $false
-            }
-            $boardsItem = Add-PnPListItem -List Appointee -Values @{
-                "Title" = $_.LastName;
-                "FirstName" = $_.FirstName;
-                "boardsArchive" = $boardsArchive;
-                "boardsMemberType" = $_.MemberType;
-                "WorkAddress" = $_.StreetName;
-                "WorkCity" = $_.City;
-                "WorkState" = $_.State;
-                "WorkZip" = $_.Zip;
-                "Email" = $_.Email;
-                "HomePhone" = $_.HomePh;
-                "WorkPhone" = $_.Businessph;
-                "WorkFax" = $_.Fax;
-                "Company" = $_.Occupation;
-                "boardsStartDate" = $_.StartDate;
-                "boardsOriginalDate" = $_.OriginalDate;
-                "boardsDateTaken" = $_.DateTaken;
-            } 
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsCommi"   = $commiLookupId;
-            }
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsOath"   = $boardsOath;
-            }
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsChairman"   = $boardsChairman;
-            }
-            if ($_.EndDate) {
-                Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                    "boardsEndDate" = $_.EndDate;
-                }
-            }
-            clv commiLookup;
-            clv commiLookupId;
-            clv boardsOath;
-            clv boardsArchive;
-            clv boardsChairman;
-        }
-        else {
-            Add-PnPListItem -List Appointee -Values @{
-                "Title"     = $appointee.LastName;
-                "FirstName" = $appointee.FirstName;
+                "boardsCommi" = $commiLookupId;
             }
         }
+        Clear-Variable commiLookup;
+        Clear-Variable commiLookupId;
     }
 }
 
@@ -209,8 +250,9 @@ function Get-CoaCommiItem {
     Clear-Variable ListItemData
 }
 
-Import-CoaCsvAppointee -FilePath "C:\alex\Appointee.csv"
+Import-CoaCsvAppointee -FilePath C:\Users\jcroc\Documents\Appointee.csv
 Add-CoaPnpListItemAppointee
+#endregion
 
 function Start-CoaCommiImport {
     Param
@@ -231,7 +273,11 @@ function Start-CoaCommiImport {
         return;
     }
     switch ($List) {
-        "Commission" { } # Import-CoaCsv -FilePath $FilePath; break; }
-        "Appointee" { Get-CoaCommiItem }
+        "Commission" { Import-CoaCsv -FilePath $FilePath; break; }
+        "Appointee" { 
+            Import-CoaCsvAppointee -FilePath $FilePath;
+            Add-CoaPnpListItemAppointee;
+            break;
+        }
     }
 }
