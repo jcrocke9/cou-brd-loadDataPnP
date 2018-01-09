@@ -169,7 +169,7 @@ function Add-CoaPnpListItemAppointee {
             }
         }
         else {
-            $boardsChairman = $false
+            $boardsArchive = $false
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
                 "boardsArchive" = $boardsArchive;
             }
