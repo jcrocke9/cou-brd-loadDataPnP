@@ -14,5 +14,5 @@ function Set-CoaItemFieldCommi {
     }
 }
 
-Add-PnPFieldFromXml -List "Appointee" -FieldXml '<Field ID="6b7f2d60-684b-4862-8eec-dd5b3440a422" Name="boardsTerm" DisplayName="Years Served" Type="Calculated" Formula="=IF(OR(ISBLANK([boardsStartDate]),ISBLANK([boardsEndDate])),"",DATEDIF([boardsStartDate],[boardsEndDate],"D"))"></Field>'
-Add-PnPView -List "Appointee" -Title "YearsServed" -Fields "Title", "FirstName", "boardsCommi", "boardsOriginalDate", "boardsTerm", "boardsEndDate" -RowLimit 5000 -Query '<Where><And><Neq><FieldRef Name="boardsArchive" /><Value Type="Boolean">1</Value></Neq><Eq><FieldRef Name="boardsDelete" /><Value Type="Boolean">0</Value></Eq></And></Where>'
+Add-PnPFieldFromXml -List "Appointee" -FieldXml '<Field ID="6b7f2d60-684b-4862-8eec-dd5b3440a422" Name="boardsTerm" DisplayName="Years Served" Type="Calculated" Formula="=IF(OR(ISBLANK([Original Date]),ISBLANK([App End Date])),[Today],DATEDIF([Original Date],[App End Date],"Y"))"></Field>'
+Add-PnPView -List "Appointee" -Title "YearsServed" -Fields "boardsCommi", "Title", "FirstName", "boardsOriginalDate", "boardsTerm", "boardsEndDate" -RowLimit 5000 -Query '<Where><And><Neq><FieldRef Name="boardsArchive" /><Value Type="Boolean">1</Value></Neq><Eq><FieldRef Name="boardsDelete" /><Value Type="Boolean">0</Value></Eq></And></Where><OrderBy><FieldRef Name="boardsTerm" Ascending="FALSE"/><FieldRef Name="boardsCommi" Ascending="TRUE"/><FieldRef Name="Title" Ascending="TRUE"/></OrderBy>'
