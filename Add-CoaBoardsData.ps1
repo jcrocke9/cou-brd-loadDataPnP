@@ -250,8 +250,8 @@ function Get-CoaCommiItem {
     Clear-Variable ListItemData
 }
 
-Import-CoaCsvAppointee -FilePath C:\Users\jcroc\Documents\Appointee.csv
-Add-CoaPnpListItemAppointee
+# Import-CoaCsvAppointee -FilePath C:\Users\jcroc\Documents\Appointee.csv
+# Add-CoaPnpListItemAppointee
 #endregion
 
 function Start-CoaCommiImport {

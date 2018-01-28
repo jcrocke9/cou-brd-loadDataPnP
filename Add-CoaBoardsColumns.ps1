@@ -2,7 +2,7 @@ Import-Module SharePointPnPPowerShellOnline -NoClobber
 
 function Add-CoaSiteColumn {
     $columnXml = @(
-        #'<Field ID="e2d7556d-b67d-42fd-b883-bc8ef1fef0c3" Name="boardsArchive" DisplayName="Archive" Type="Boolean" Group="Boards"><Default>No</Default></Field>',
+        '<Field ID="e2d7556d-b67d-42fd-b883-bc8ef1fef0c3" Name="boardsArchive" DisplayName="Archive" Type="Boolean" Group="Boards"><Default>No</Default></Field>',
         '<Field ID="264346f4-bda5-4c8e-99e0-6f68cb702670" Name="boardsDelete" DisplayName="Delete" Type="Boolean" Group="Boards"><Default>No</Default></Field>',
         '<Field ID="9a69b990-d2a4-4f59-9286-e80363897b97" Name="boardsDeletedDate" DisplayName="Deleted When" Type="DateTime" Format="DateOnly" Group="Boards"></Field>',
         '<Field ID="9d7a2e52-9dd0-4bd8-a325-853cc911334b" Name="boardsDeletedBy" DisplayName="Deleted By" Type="Text" Group="Boards"></Field>',
