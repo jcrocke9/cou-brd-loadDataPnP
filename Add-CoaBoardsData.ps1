@@ -133,105 +133,105 @@ function Import-CoaCsvAppointee {
 function Add-CoaPnpListItemAppointee {
     $appointeesArr | ForEach-Object {
         $boardsItem = Add-PnPListItem -List Appointee -Values @{
-            "Title"            = $_.LastName;
-            "FirstName"        = $_.FirstName;
-            "boardsMemberType" = $_.MemberType;
-            "WorkAddress"      = $_.StreetName;
-            "WorkCity"         = $_.City;
-            "WorkState"        = $_.State;
-            "WorkZip"          = $_.Zip;
-            "Email"            = $_.Email;
-            "HomePhone"        = $_.HomePh;
-            "WorkPhone"        = $_.Businessph;
-            "WorkFax"          = $_.Fax;
-            "Company"          = $_.Occupation;
-            "boardsDeletedBy"  = $_.DeletedBy;
-            "boardsDesc"       = $_.Comments;
+            "Title"            = $_.LastName; # appointee
+            "FirstName"        = $_.FirstName; # appointee
+            "atmMemberType" = $_.MemberType; # appointment
+            "WorkAddress"      = $_.StreetName; # appointee
+            "WorkCity"         = $_.City; # appointee
+            "WorkState"        = $_.State; # appointee
+            "WorkZip"          = $_.Zip; # appointee
+            "Email"            = $_.Email; # appointee
+            "HomePhone"        = $_.HomePh; # appointee
+            "WorkPhone"        = $_.Businessph; # appointee
+            "WorkFax"          = $_.Fax; # appointee
+            "Company"          = $_.Occupation; # appointee
+            "atmDeletedBy"  = $_.DeletedBy; # appointment
+            "atmDesc"       = $_.Comments; # appointment
 
         }
         if ($_.Oath -eq "TRUE") {
-            $boardsOath = $true
+            $atmOath = $true
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsOath" = $boardsOath;
+                "atmOath" = $atmOath; # appointment
             } 
         }
         else {
-            $boardsOath = $false
+            $atmOath = $false
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsOath" = $boardsOath;
+                "atmOath" = $atmOath;
             } 
         }
-        Clear-Variable boardsOath
+        Clear-Variable atmOath
         if ($_.Archive -eq "TRUE") {
-            $boardsArchive = $true
+            $atmArchive = $true
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsArchive" = $boardsArchive;
+                "atmArchive" = $atmArchive; # appointment
             }
         }
         else {
-            $boardsArchive = $false
+            $atmArchive = $false
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsArchive" = $boardsArchive;
+                "atmArchive" = $atmArchive;
             }
         }
-        Clear-Variable boardsArchive;
+        Clear-Variable atmArchive;
         if ($_.Chairman -eq "TRUE") {
-            $boardsChairman = $true
+            $atmChairman = $true
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsChairman" = $boardsChairman;
+                "atmChairman" = $atmChairman; # appointment
             }
         }
         else {
-            $boardsChairman = $false
+            $atmChairman = $false
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsChairman" = $boardsChairman;
+                "atmChairman" = $atmChairman;
             }
         }
-        Clear-Variable boardsChairman; 
+        Clear-Variable atmChairman; 
         if ($_.Delete -eq "TRUE") {
-            $boardsDelete = $true;
+            $atmDelete = $true;
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsDelete" = $boardsDelete;
+                "atmDelete" = $atmDelete;
             }
         }
         else {
-            $boardsDelete = $false;
+            $atmDelete = $false;
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsDelete" = $boardsDelete;
+                "atmDelete" = $atmDelete; # appointment
             }
         }
-        Clear-Variable boardsDelete;
+        Clear-Variable atmDelete;
 
         if ($_.StartDate) {
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsStartDate" = $_.StartDate;
+                "atmStartDate" = $_.StartDate; # appointment
             }
         }
         if ($_.EndDate) {
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsEndDate" = $_.EndDate;
+                "atmEndDate" = $_.EndDate; # appointment
             }
         }
         if ($_.OriginalDate) {
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsOriginalDate" = $_.OriginalDate;
+                "atmOriginalDate" = $_.OriginalDate; # appointment
             }
         }
         if ($_.DateTaken) {
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsDateTaken" = $_.DateTaken;
+                "atmDateTaken" = $_.DateTaken; # appointment
             }
         }
         if ($_.DeletedWhen) {
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsDeletedDate" = $_.DeletedWhen;
+                "atmDeletedDate" = $_.DeletedWhen; # appointment
             }
         }
         if ($_.Commission) {
             $commiLookup = Get-CoaCommiItem -ListItemTitle $_.Commission
             $commiLookupId = $commiLookup.Id;
             Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
-                "boardsCommi" = $commiLookupId;
+                "atmCommi" = $commiLookupId; # appointment
             }
         }
         Clear-Variable commiLookup;
