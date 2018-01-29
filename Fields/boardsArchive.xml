@@ -1,22 +1,23 @@
-<Field ID="" Name="commiTotalMembers" DisplayName="Total Members" Type="Number" Group="Commissions" Decimal="0"></Field>
-<Field ID="" Name="commiDesc" DisplayName="Description of Commission" Type="Note" Group="Commissions"></Field>
-<Field ID="" Name="commiTerm" DisplayName="Term" Type="Text" Group="Commissions"></Field>
-<Field ID="" Name="commiMberCommt" DisplayName="Member Composition" Type="Note" Group="Commissions"></Field>
-<Field ID="" Name="commiCityStaff1" DisplayName="City Staff Contact" Type="Text" Group="Commissions"></Field>
-<Field ID="" Name="roleCommi" DisplayName="Commission" Group="Role" Type="Lookup" List="Lists/Commissions" ShowField="Title"></Field>
-<Field ID="" Name="roleVote" DisplayName="Vote" Type="Boolean" Group="Role"><Default>No</Default></Field>
-<Field ID="" name="roleType" DisplayName="Role Type" Type="Choice" Group="Role" Format="Dropdown"><CHOICES><CHOICE>Citizen</CHOICE><CHOICE>Council</CHOICE><CHOICE>Representative</CHOICE><CHOICE>Staff</CHOICE><CHOICE>Alternate</CHOICE><CHOICE>Unspecified</CHOICE><CHOICES></Field>
-<Field ID="" Name="atmCommi" DisplayName="Commission" Group="Appointment" Type="Lookup" List="Lists/Commissions" ShowField="Title"></Field>
-<Field ID="" Name="atmRole" DisplayName="Role" Group="Appointment" Type="Lookup" List="Lists/Roles" ShowField="Title"></Field>
-<Field ID="" Name="atmMemberType" DisplayName="Member Role" Type="Text" Group="Appointment"></Field>
-<Field ID="" Name="atmOath" DisplayName="Oath" Type="Boolean" Group="Appointment"><Default>No</Default></Field>
-<Field ID="" Name="atmChairman" DisplayName="Chairman" Type="Boolean" Group="Appointment"><Default>No</Default></Field>
-<Field ID="" Name="atmStartDate" DisplayName="Appointment Start Date" Type="DateTime" Format="DateOnly" Group="Appointment"></Field>
-<Field ID="" Name="atmEndDate" DisplayName="Appointment End Date" Type="DateTime" Format="DateOnly" Group="Appointment"></Field>
-<Field ID="" Name="atmOriginalDate" DisplayName="Original Appointment Date" Type="DateTime" Format="DateOnly" Group="Appointment"></Field>
-<Field ID="" Name="atmDateTaken" DisplayName="Date Oath Taken" Type="DateTime" Format="DateOnly" Group="Appointment"></Field>
-<Field ID="e2d7556d-b67d-42fd-b883-bc8ef1fef0c3" Name="atmArchive" DisplayName="Archive" Type="Boolean" Group="Appointment"><Default>No</Default></Field>
-<Field ID="264346f4-bda5-4c8e-99e0-6f68cb702670" Name="atmDelete" DisplayName="Delete" Type="Boolean" Group="Appointment"><Default>No</Default></Field>
-<Field ID="9a69b990-d2a4-4f59-9286-e80363897b97" Name="atmDeletedDate" DisplayName="Deleted When" Type="DateTime" Format="DateOnly" Group="Appointment"></Field>
-<Field ID="9d7a2e52-9dd0-4bd8-a325-853cc911334b" Name="atmDeletedBy" DisplayName="Deleted By" Type="Text" Group="Appointment"></Field>
-<Field ID="df3958d8-a3bb-4f51-b252-28f73c59e90e" Name="atmDesc" DisplayName="Comments" Type="Note" Group="Appointment"></Field>
+'<Field ID="16fb43b0-f918-4650-a7d0-be3da1527963" Name="commiTotalMembers" DisplayName="Total Members" Type="Number" Group="Commissions" Decimal="0"></Field>',
+'<Field ID="d7c291a4-0d6b-45cb-8956-514cc3f1b459" Name="commiDesc" DisplayName="Description of Commission" Type="Note" Group="Commissions"></Field>',
+'<Field ID="42f0ff7c-d509-4592-9730-10aa6b1e07fe" Name="commiTerm" DisplayName="Term" Type="Text" Group="Commissions"></Field>',
+'<Field ID="e268e6c8-a574-43f2-9a84-c5c4d7c40a77" Name="commiMberCommt" DisplayName="Member Composition" Type="Note" Group="Commissions"></Field>',
+'<Field ID="4f88b400-5dba-478d-acea-c58219932963" Name="commiCityStaff1" DisplayName="City Staff Contact" Type="Text" Group="Commissions"></Field>',
+'<Field ID="24e1e1cd-1a6f-4299-a2c6-10f20b05add1" Name="roleCommi" DisplayName="Commission" Group="Role" Type="Lookup" List="Lists/Commissions" ShowField="Title"></Field>',
+'<Field ID="fe402d8e-dec4-4796-b6d3-3ee3b80c88f0" Name="roleVote" DisplayName="Vote" Type="Boolean" Group="Role"><Default>No</Default></Field>',
+'<Field ID="45a9c655-bc51-454e-b7e5-0108717a2e67" Name="roleType" DisplayName="Role Type" Type="Choice" Group="Role" BaseType="Text" Format="Dropdown"><CHOICES><CHOICE>Citizen</CHOICE><CHOICE>Council</CHOICE><CHOICE>Representative</CHOICE><CHOICE>Staff</CHOICE><CHOICE>Alternate</CHOICE><CHOICE>Unspecified</CHOICE></CHOICES></Field>',
+'<Field ID="e927d8ec-2fdd-4b7d-a623-53c7b7a9aa1b" Name="atmCommi" DisplayName="Commission" Group="Appointment" Type="Lookup" List="Lists/Commissions" ShowField="Title"></Field>',
+'<Field ID="4ad4298b-076f-4581-b595-90e0c11ffa78" Name="atmRole" DisplayName="Role" Group="Appointment" Type="Lookup" List="Lists/Roles" ShowField="Title"></Field>',
+'<Field ID="54598e78-b060-42a4-a4c7-3f7ed42ea339" Name="atmMemberType" DisplayName="Member Role" Type="Text" Group="Appointment"></Field>',
+'<Field ID="a39303ee-d60f-4ee4-aee1-5027c8a06f10" Name="atmOath" DisplayName="Oath" Type="Boolean" Group="Appointment"><Default>No</Default></Field>',
+'<Field ID="837b789a-960e-4bd4-8ad2-74152cb5778b" Name="atmChairman" DisplayName="Chairman" Type="Boolean" Group="Appointment"><Default>No</Default></Field>',
+'<Field ID="5fd59375-1aa9-433e-8678-59be2c643a61" Name="atmStartDate" DisplayName="Appointment Start Date" Type="DateTime" Format="DateOnly" Group="Appointment"></Field>',
+'<Field ID="a9cbe2b7-1112-4ea1-89d1-aaee5998e34d" Name="atmEndDate" DisplayName="Appointment End Date" Type="DateTime" Format="DateOnly" Group="Appointment"></Field>',
+'<Field ID="3e100216-a062-428c-b47c-59439e47aef4" Name="atmOriginalDate" DisplayName="Original Appointment Date" Type="DateTime" Format="DateOnly" Group="Appointment"></Field>',
+'<Field ID="4caacdb5-1eff-4b43-905e-8ead2e485047" Name="atmDateTaken" DisplayName="Date Oath Taken" Type="DateTime" Format="DateOnly" Group="Appointment"></Field>',
+'<Field ID="e2d7556d-b67d-42fd-b883-bc8ef1fef0c3" Name="atmArchive" DisplayName="Archive" Type="Boolean" Group="Appointment"><Default>No</Default></Field>',
+'<Field ID="264346f4-bda5-4c8e-99e0-6f68cb702670" Name="atmDelete" DisplayName="Delete" Type="Boolean" Group="Appointment"><Default>No</Default></Field>',
+'<Field ID="9a69b990-d2a4-4f59-9286-e80363897b97" Name="atmDeletedDate" DisplayName="Deleted When" Type="DateTime" Format="DateOnly" Group="Appointment"></Field>',
+'<Field ID="9d7a2e52-9dd0-4bd8-a325-853cc911334b" Name="atmDeletedBy" DisplayName="Deleted By" Type="Text" Group="Appointment"></Field>',
+'<Field ID="df3958d8-a3bb-4f51-b252-28f73c59e90e" Name="atmDesc" DisplayName="Comments" Type="Note" Group="Appointment"></Field>',
+'<Field ID="6b7f2d60-684b-4862-8eec-dd5b3440a422" Name="atmTerm" DisplayName="Years Served" Type="Calculated" Formula="=IF(OR(ISBLANK([Original Date]),ISBLANK([App End Date])),[Today],DATEDIF([Original Date],[App End Date],"Y"))"></Field>'
