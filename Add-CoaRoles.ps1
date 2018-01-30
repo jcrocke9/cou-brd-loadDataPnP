@@ -80,6 +80,5 @@ function Add-CoaRoles {
                 "roleVote" = $roleVote;
             }
         }
-        Clear-Variable roleVote
     }
 }
