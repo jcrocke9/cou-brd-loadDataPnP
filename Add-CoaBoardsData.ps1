@@ -1,4 +1,25 @@
 Import-Module SharePointPnPPowerShellOnline  -NoClobber
+#region: Logging Start
+$logLineTime = (Get-Date).ToString() 
+$logFileDate = Get-Date -UFormat "%Y%m%d"
+$logLineInfo = "`t$([Environment]::UserName)`t$([Environment]::MachineName)`t"
+$logCode = "Start"
+$writeTo = "Starting Import Script"
+$logLine = $null
+function WriteToLog {
+    param([string]$logLineTime, [string]$writeTo, [string]$logCode)
+    $logLine = $logLineTime
+    $logLine += $logLineInfo
+    $logLine += $logCode; $logLine += "`t"
+    $logLine += $writeTo
+    $logLine | Out-File -FilePath "C:\logs\BCApp1_$logFileDate.log" -Append -NoClobber
+    Clear-Variable logLine -Scope global
+    Clear-Variable writeTo -Scope global
+    Clear-Variable logLineTime -Scope global
+    Clear-Variable logCode -Scope global
+}
+WriteToLog -logLineTime $logLineTime -writeTo $writeTo -logCode $logCode
+#endregion
 
 function Connect-CoaPnpSite {
     Param
@@ -62,6 +83,7 @@ function Add-CoaPnpListItem {
 class Appointee {
     [string]$LastName
     [string]$FirstName
+    [string]$FullName
     [string]$Archive
     [string]$Commission
     [string]$MemberType
@@ -71,7 +93,7 @@ class Appointee {
     [string]$City
     [string]$State
     [string]$Zip
-    [string]$Email
+    [string]$EMail
     [string]$HomePh
     [string]$Businessph
     [string]$Fax
@@ -90,9 +112,8 @@ class Appointee {
     [string]$DeletedWhen
     [string]$DeletedBy
 }
-
 $appointeesArr = [System.Collections.Generic.List[System.Object]]::new();
-
+$appointmentArr = [System.Collections.Generic.List[System.Object]]::new();
 function Import-CoaCsvAppointee {
     Param
     (
@@ -101,8 +122,13 @@ function Import-CoaCsvAppointee {
     )
     Import-Csv -Path $FilePath | ForEach-Object {
         $appointee = [Appointee]::new()
-        $appointee.LastName = $_.LastName
-        $appointee.FirstName = $_.FirstName
+        $temLastName = $_.LastName
+        $appointee.LastName = $temLastName.Trim()
+        $temFirstName = $_.FirstName
+        $appointee.FirstName = $temFirstName.Trim()
+        $appointee.FullName = $temFirstName.Trim() + " " + $temLastName.Trim()
+        Clear-Variable temFirstName
+        Clear-Variable temLastName;
         $appointee.Archive = $_.Archive
         $appointee.Commission = $_.Commission
         $appointee.MemberType = $_.MemberType + " " + $_.MemberType2
@@ -110,7 +136,7 @@ function Import-CoaCsvAppointee {
         $appointee.City = $_.City
         $appointee.State = $_.State
         $appointee.Zip = $_.Zip
-        $appointee.Email = $_."E-mail"
+        $appointee.EMail = $_."E-mail"
         $appointee.HomePh = $_."Home-Ph"
         $appointee.Businessph = $_."Business-ph"
         $appointee.Fax = $_.Fax
@@ -126,117 +152,146 @@ function Import-CoaCsvAppointee {
         $appointee.Delete = $_.Delete
         $appointee.DeletedWhen = $_.DeletedWhen
         $appointee.DeletedBy = $_.DeletedBy
-        $appointeesArr.Add($appointee);
+        if (!$appointeesArr.Exists( {param($a) $a.FullName -eq $appointee.FullName})) {            
+            $appointeesArr.Add($appointee);
+        }
+        $appointmentArr.Add($appointee);
     }
+    $writeTo = "Finished importing appointee data with " + $appointeesArr.Count + " and " + $appointmentArr.Count
+    $logCode = "Success"
+    $logLineTime = (Get-Date).ToString()
+    WriteToLog -logLineTime $logLineTime -writeTo $writeTo -logCode $logCode
+    pause
+    # Add-CoaPnpListItemAppointee
+    Add-CoaPnpListItemAppointment
 }
 
 function Add-CoaPnpListItemAppointee {
     $appointeesArr | ForEach-Object {
-        $boardsItem = Add-PnPListItem -List Appointee -Values @{
-            "Title"            = $_.LastName; # appointee
-            "FirstName"        = $_.FirstName; # appointee
-            "atmMemberType" = $_.MemberType; # appointment
-            "WorkAddress"      = $_.StreetName; # appointee
-            "WorkCity"         = $_.City; # appointee
-            "WorkState"        = $_.State; # appointee
-            "WorkZip"          = $_.Zip; # appointee
-            "Email"            = $_.Email; # appointee
-            "HomePhone"        = $_.HomePh; # appointee
-            "WorkPhone"        = $_.Businessph; # appointee
-            "WorkFax"          = $_.Fax; # appointee
-            "Company"          = $_.Occupation; # appointee
-            "atmDeletedBy"  = $_.DeletedBy; # appointment
-            "atmDesc"       = $_.Comments; # appointment
-
+        Add-PnPListItem -List Appointees -Values @{
+            "Title"         = $_.LastName;
+            "FirstName"     = $_.FirstName;
+            "FullName"      = $_.FullName;
+            "WorkAddress"   = $_.StreetName;
+            "WorkCity"      = $_.City;
+            "WorkState"     = $_.State;
+            "WorkZip"       = $_.Zip;
+            "EMail"         = $_.EMail;
+            "HomePhone"     = $_.HomePh;
+            "WorkPhone"     = $_.Businessph;
+            "WorkFax"       = $_.Fax;
+            "Company"       = $_.Occupation;
+        }
+    }
+    $writeTo = "Finished exporting all appointees"
+    $logCode = "Success"
+    $logLineTime = (Get-Date).ToString()
+    WriteToLog -logLineTime $logLineTime -writeTo $writeTo -logCode $logCode
+    Pause
+    Add-CoaPnpListItemAppointment
+}
+function Add-CoaPnpListItemAppointment {
+    $appointmentArr | ForEach-Object {
+        $boardsItem = Add-PnPListItem -List Appointments -Values @{
+            "Title" = $_.MemberType;
+            "atmDesc"      = $_.Comments;
         }
         if ($_.Oath -eq "TRUE") {
-            $atmOath = $true
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+            $atmOath = 1
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmOath" = $atmOath; # appointment
             } 
-        }
-        else {
-            $atmOath = $false
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+        } else {
+            $atmOath = 0
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmOath" = $atmOath;
             } 
         }
         Clear-Variable atmOath
-        if ($_.Archive -eq "TRUE") {
-            $atmArchive = $true
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+        <# if ($_.Archive -eq "TRUE") {
+            $atmArchive = 1
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmArchive" = $atmArchive; # appointment
             }
-        }
-        else {
-            $atmArchive = $false
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+        } else {
+            $atmArchive = 0
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmArchive" = $atmArchive;
             }
         }
-        Clear-Variable atmArchive;
+        Clear-Variable atmArchive; #>
         if ($_.Chairman -eq "TRUE") {
-            $atmChairman = $true
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+            $atmChairman = 1
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmChairman" = $atmChairman; # appointment
             }
-        }
-        else {
-            $atmChairman = $false
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+        } else {
+            $atmChairman = 0
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmChairman" = $atmChairman;
             }
         }
         Clear-Variable atmChairman; 
-        if ($_.Delete -eq "TRUE") {
-            $atmDelete = $true;
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+        <# if ($_.Delete -eq "TRUE") {
+            $atmDelete = 1;
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmDelete" = $atmDelete;
             }
-        }
-        else {
-            $atmDelete = $false;
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+        } else {
+            $atmDelete = 0;
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmDelete" = $atmDelete; # appointment
             }
         }
-        Clear-Variable atmDelete;
-
+        Clear-Variable atmDelete; #>
         if ($_.StartDate) {
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmStartDate" = $_.StartDate; # appointment
             }
         }
         if ($_.EndDate) {
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmEndDate" = $_.EndDate; # appointment
             }
         }
         if ($_.OriginalDate) {
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmOriginalDate" = $_.OriginalDate; # appointment
             }
         }
         if ($_.DateTaken) {
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmDateTaken" = $_.DateTaken; # appointment
             }
         }
-        if ($_.DeletedWhen) {
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+        <# if ($_.DeletedWhen) {
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmDeletedDate" = $_.DeletedWhen; # appointment
             }
-        }
+        } #>
         if ($_.Commission) {
             $commiLookup = Get-CoaCommiItem -ListItemTitle $_.Commission
             $commiLookupId = $commiLookup.Id;
-            Set-PnPListItem -List Appointee -Identity $boardsItem.Id -Values @{
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
                 "atmCommi" = $commiLookupId; # appointment
             }
         }
         Clear-Variable commiLookup;
         Clear-Variable commiLookupId;
+        if ($_.FullName) {
+            $appteeLookup = Get-CoaAppteeItem -ListItemTitle $_.FullName
+            $appteeLookupId = $appteeLookup.Id;
+            Set-PnPListItem -List Appointments -Identity $boardsItem.Id -Values @{
+                "atmAppointee" = $appteeLookupId; # appointment
+            }
+        }
+        Clear-Variable appteeLookup;
+        Clear-Variable appteeLookupId;
     }
+    $writeTo = "Finished exporting all appointments"
+    $logCode = "Success"
+    $logLineTime = (Get-Date).ToString()
+    WriteToLog -logLineTime $logLineTime -writeTo $writeTo -logCode $logCode
 }
 
 function Get-CoaCommiItem {
@@ -249,12 +304,19 @@ function Get-CoaCommiItem {
     Write-Output $ListItemData
     Clear-Variable ListItemData
 }
-
-# Import-CoaCsvAppointee -FilePath C:\Users\jcroc\Documents\Appointee.csv
-# Add-CoaPnpListItemAppointee
+function Get-CoaAppteeItem {
+    Param
+    (
+        [parameter(Mandatory = $true)]
+        [String]$ListItemTitle
+    )
+    $ListItemData = Get-PnPListItem -List Appointees -Query "<View><Query><Where><Eq><FieldRef Name='FullName'/><Value Type='Text'>$ListItemTitle</Value></Eq></Where></Query></View>"
+    Write-Output $ListItemData
+    Clear-Variable ListItemData
+}
 #endregion
 
-function Start-CoaCommiImport {
+function Start-CoaBCAppImport {
     Param
     (
         [parameter(Mandatory = $true)]
@@ -267,17 +329,28 @@ function Start-CoaCommiImport {
     )
     try {
         Connect-CoaPnpSite -Url $Url
+        $writeTo = "Connected to $Url"
+        $logCode = "Success"
+        $logLineTime = (Get-Date).ToString()
+        WriteToLog -logLineTime $logLineTime -writeTo $writeTo -logCode $logCode
     }
     catch {
         Write-Output "Error connecting"
+        $writeTo = "Unable to connect to $Url"
+        $logCode = "Error"
+        $logLineTime = (Get-Date).ToString()
+        WriteToLog -logLineTime $logLineTime -writeTo $writeTo -logCode $logCode
         return;
     }
     switch ($List) {
         "Commission" { Import-CoaCsv -FilePath $FilePath; break; }
         "Appointee" { 
             Import-CoaCsvAppointee -FilePath $FilePath;
-            Add-CoaPnpListItemAppointee;
             break;
         }
     }
+    $writeTo = "Exiting CoaBCAppImport"
+    $logCode = "Success"
+    $logLineTime = (Get-Date).ToString()
+    WriteToLog -logLineTime $logLineTime -writeTo $writeTo -logCode $logCode
 }

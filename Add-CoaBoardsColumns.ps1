@@ -1,9 +1,9 @@
 Import-Module SharePointPnPPowerShellOnline -NoClobber
 function Add-CoaBCAppLists {
-    New-PnPList -Title Commissions -Template GenericList
-    New-PnPList -Title Roles -Template GenericList
-    New-PnPList -Title Appointments -Template GenericList
-    New-PnPList -Title Appointees -Template GenericList
+    New-PnPList -Title Commissions -Template GenericList -OnQuickLaunch
+    New-PnPList -Title Roles -Template GenericList -OnQuickLaunch
+    New-PnPList -Title Appointments -Template GenericList -OnQuickLaunch
+    New-PnPList -Title Appointees -Template GenericList  -OnQuickLaunch
 }
 function Add-CoaSiteColumn {
     $columnXml = @(
@@ -50,7 +50,7 @@ function Add-CoaColumnToCtRole {
     }
 }
 function Add-CoaColumnToCtAppointee {
-    $columnNames = @('FirstName', 'WorkAddress', 'WorkCity', 'WorkState', 'WorkZip', 'EMail', 'HomePhone', 'WorkPhone', 'WorkFax', 'Company');
+    $columnNames = @('FullName','FirstName', 'WorkAddress', 'WorkCity', 'WorkState', 'WorkZip', 'EMail', 'HomePhone', 'WorkPhone', 'WorkFax', 'Company');
     $columnNames | ForEach-Object {
         Add-PnPFieldToContentType -Field $_ -ContentType Appointee
     }
@@ -67,11 +67,12 @@ function Add-CoaPnPContentTypeToList {
     Add-PnPContentTypeToList -List "Appointees" -ContentType "Appointee" -DefaultContentType
     Add-PnPContentTypeToList -List "Appointments" -ContentType "Appointment" -DefaultContentType
 }
+# DOESN'T WORK:
 function Add-CoaSiteColumnLookups {
     $columnXml = @(
-        '<Field ID="24e1e1cd-1a6f-4299-a2c6-10f20b05add1" Name="roleCommi" DisplayName="Commission" Group="Role" Type="Lookup" List="Lists/Commissions" ShowField="Title"></Field>',
+        '<Field ID="24e1e1cd-1a6f-4299-a2c6-10f20b05add1" Name="roleCommi" DisplayName="Commission Associated" Group="Role" Type="Lookup" List="Lists/Commissions" ShowField="Title"></Field>',
         '<Field ID="e927d8ec-2fdd-4b7d-a623-53c7b7a9aa1b" Name="atmCommi" DisplayName="Commission" Group="Appointment" Type="Lookup" List="Lists/Commissions" ShowField="Title"></Field>',
-        '<Field ID="4ad4298b-076f-4581-b595-90e0c11ffa78" Name="atmRole" DisplayName="Role" Group="Appointment" Type="Lookup" List="Lists/Roles" ShowField="Title"></Field>',
+        '<Field ID="4ad4298b-076f-4581-b595-90e0c11ffa78" Name="atmRole" DisplayName="Appointment Role" Group="Appointment" Type="Lookup" List="Lists/Roles" ShowField="Title"></Field>',
         '<Field ID="7ec3175e-93eb-4cb7-8a50-f8671729e53f" Name="atmAppointee" DisplayName="Appointee" Group="Appointment" Type="Lookup" List="Lists/Appointee" ShowField="Title"></Field>'
     );
     $columnXml | ForEach-Object {
