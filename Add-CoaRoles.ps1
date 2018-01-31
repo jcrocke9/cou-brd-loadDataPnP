@@ -17,7 +17,7 @@ function WriteToLog {
     Clear-Variable logLineTime -Scope global
     Clear-Variable logCode -Scope global
 }
-WriteToLog -logLineTime $logLineTime -writeTo $writeTo -logCode $logCode
+# WriteToLog -logLineTime $logLineTime -writeTo $writeTo -logCode $logCode
 #endregion
 function Get-CoaCommiItem {
     Param
@@ -81,4 +81,26 @@ function Add-CoaRoles {
             }
         }
     }
+}
+function Set-CoaRolesFields {
+    Add-PnPField -DisplayName "Role of Appointee" -InternalName "roleChoice" -Type "Text" -Group "Role"
+    Add-PnPFieldToContentType -Field "roleChoice" -ContentType "Role"
+}
+function Add-CoaRolesWithCommissions {
+    $i = 0
+    Get-PnPListItem -List Roles -Fields "Title","roleCommi" | ForEach-Object {
+        $index = $i++
+        $title = $_["Title"];
+        $commission = $_["roleCommi"].LookupValue
+        $newFieldValue = $commission + " | " + $title + " " + $index
+        $newFieldValue
+        $itemId = $_.Id;
+        Set-PnPListItem -List "Roles" -Identity $itemId -Values @{"roleChoice" = $newFieldValue}
+        Clear-Variable title;
+        Clear-Variable commission;
+        Clear-Variable newFieldValue;
+    }
+}
+function Add-CoaAppointmentToRole {
+    Add-PnPFieldToContentType -Field "roleApte" -ContentType "Role"
 }
